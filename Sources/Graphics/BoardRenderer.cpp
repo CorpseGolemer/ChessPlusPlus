@@ -4,6 +4,7 @@
 #include "../../Headers/Graphics/Colors.h"
 #include "../../Headers/Game/GameManager.h"
 #include "../../Headers/Graphics/UI/ButtonManager.h"
+#include <numbers>
 
 void BoardRenderer::RenderVertices::RenderStates::initializeStates() {
     tileDescStates.texture = &Resources::get().getFont(DESCRIPTION_FONT).getTexture(24);
@@ -74,7 +75,7 @@ PromotionRenderer &BoardRenderer::getPromotionRenderer() {
 /// Implementacja onMouseMoce
 void BoardRenderer::onMouseMoved(sf::Vector2f mousePos) {
     notifyChange(GameEvent::HoverChanged);
-    if (gameManager.getPromotionFile() != -1) promotionRenderer.handleHover(mousePos);
+    if (gameManager.getPromotionFile().has_value()) promotionRenderer.handleHover(mousePos);
 
     mousePos.x = std::clamp(mousePos.x, BOARD_ORIGIN.x, BOARD_ORIGIN.x + 8 * TILE_SIZE - 1);
     mousePos.y = std::clamp(mousePos.y, BOARD_ORIGIN.y - 8 * TILE_SIZE + 1, BOARD_ORIGIN.y - 1);
@@ -360,14 +361,14 @@ void BoardRenderer::updateDraggedPiece() {
 
 /// Implementacja drawPromotionWindow
 void BoardRenderer::updatePromotionWindow() {
-    const int promotionTile = gameManager.getPromotionFile();
-    if (promotionTile == -1) {
+    const std::optional<std::pair<uint8_t, uint8_t>> promotionTile = gameManager.getPromotionFile();
+    if (!promotionTile.has_value()) {
         cache.promoting = false;
         promotionRenderer.deactivate(cache.hover.hoverPosition);
         return;
     }
 
-    const int fst = promotionTile / 8; const int snd = promotionTile % 8;
+    auto [fst, snd] = promotionTile.value();
     promotionRenderer.updatePositions(tileCenter(TILE_POSITIONS[fst][snd]), fst == 7);
     promotionRenderer.activate(cache.hover.hoverPosition);
     cache.promoting = true;

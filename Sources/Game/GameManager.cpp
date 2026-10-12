@@ -1,6 +1,5 @@
 #include "../../Headers/Game/GameManager.h"
 #include <algorithm>
-#include <iostream>
 #include "../../Headers/Graphics/BoardRenderer.h"
 
 /// setState
@@ -30,14 +29,16 @@ void GameManager::handleSelectionLeftClick(const std::pair<int, int> &tile) {
         p = game.getBoard().getPiece(static_cast<int8>(tile.first), static_cast<int8>(tile.second));
     }
 
-    if (selectedTile.first == tile.first && selectedTile.second == tile.second) {
+    if (!selectedTile.has_value()) return;
+
+    if (selectedTile.value().first == tile.first && selectedTile.value().second == tile.second) {
         assert(p != nullptr && "Selected file should have a piece!");
         draggingPiece.startDraggingPiece(p->coloredSymbol(), tile, false);
         setState(GameState::Dragging);
         return;
     }
     if (localPlayer == game.getCurrentPlayer()) {
-        if (game.tryMakeMove(tile.first, tile.second, selectedTile)) {
+        if (game.tryMakeMove(tile.first, tile.second, selectedTile.value())) {
             onAfterMove();
             return;
         }
@@ -61,7 +62,7 @@ void GameManager::handleRightClick(const std::pair<int, int> &tile) {
     }
     notify(GameEvent::SelectionChanged);
     if (!Board::isOnBoard(tile)) return;
-    auto it = std::ranges::find(highlightedTiles.begin(), highlightedTiles.end(), tile);
+    auto it = std::ranges::find(highlightedTiles, tile);
     if (it != highlightedTiles.end()) {
         highlightedTiles.erase(it);
         return;
@@ -156,6 +157,7 @@ void GameManager::onRightClicked(const std::pair<int, int> & tile) {
             selectedTile = {-1,-1};
             setState(GameState::Idle);
             notify(GameEvent::SelectionChanged);
+            break;
         }
         case GameState::GameOver: {
             handleRightClick(tile);
@@ -189,8 +191,9 @@ void GameManager::setBot(std::unique_ptr<IBot> bot) {
 }
 
 /// Implementacja metody zwracającej obecnie wybrane pole
-const std::pair<int,int> & GameManager::getSelectedTile() const {
-    return selectedTile;
+const std::pair<int,int> GameManager::getSelectedTile() const {
+    if (!isTileSelected()) return {-1, -1};
+    return selectedTile.value();
 }
 
 /// Implementacja getHighlightedTiles
@@ -200,7 +203,7 @@ const std::vector<std::pair<int, int>>& GameManager::getHighlightedTiles() const
 
 /// Zwraca true, jeśli pole jest wybrane i false w przeciwnym wypadku
 bool GameManager::isTileSelected() const {
-    return selectedTile.first != -1 && selectedTile.second != -1;
+    return selectedTile.has_value();
 }
 
 /// Zwraca referencję do instancji gry
@@ -218,11 +221,10 @@ GameState GameManager::getState() const {
     return state;
 }
 
-int GameManager::getPromotionFile() const {
-    if (game.getBoard().isPromoting() == -1) return -1;
+std::optional<std::pair<uint8_t, uint8_t>> GameManager::getPromotionFile() const {
+    if (game.getBoard().isPromoting() == -1) return std::nullopt;
     const bool flag = game.getBoard().isWhitesTurn();
-    const int promotionFile = (flag ? 0 : 7) * 8 + game.getBoard().isPromoting();
-    return promotionFile;
+    return std::pair<uint8_t, uint8_t>(flag ? 0 : 7 ,game.getBoard().isPromoting());
 }
 
 std::optional<Move> GameManager::getLastMove() const {
@@ -239,7 +241,9 @@ std::vector<GameManager::MoveHint> GameManager::selectedPieceMoves() const {
     std::vector<MoveHint> moves;
     std::pair lastPromotionDestination = {-1,-1};
 
-    if (const auto [fst, snd] = this->selectedTile; fst != -1) {
+    if (!selectedTile.has_value()) return {};
+
+    if (const auto [fst, snd] = this->selectedTile.value(); fst != -1) {
         if (!game.getBoard().getMoves().has_value()) return moves;
         for (const auto & allMoves = game.getBoard().getMoves().value(); const auto & move : allMoves) {
             if (move.getPosition() == std::pair{fst, snd}) {

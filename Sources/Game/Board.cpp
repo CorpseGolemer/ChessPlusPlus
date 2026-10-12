@@ -1,6 +1,4 @@
 #include "../../Headers/Game/Board.h"
-
-#include <algorithm>
 #include <iostream>
 
 #include "../../Headers/Pieces/Bishop.h"
@@ -162,35 +160,6 @@ std::pmr::vector<Move> Board::findShallowMoves() const {
     return allMoves;
 }
 
-/// Implementacja findAllShallowMoves
-void Board::findAllShallowMoves(std::pmr::vector<Move> &thisMoves, std::pmr::vector<Move> &opponentMoves) const {
-    for (int8 i = 0; i < 8; i++) {
-        for (int8 j = 0; j < 8 ; j++) {
-            if (Piece* piece = board[i][j]; piece != nullptr) {
-                if(piece->getColor() == whitesTurn) {
-                    piece->movesInPosition(*this, i, j, thisMoves);
-                }
-                else {
-                    piece->movesInPosition(*this, i, j, opponentMoves);
-                }
-            }
-        }
-    }
-}
-
-/// Implementacja wouldExposeKing
-bool Board::wouldExposeKing(const std::pmr::vector<Move> & tempMoves, const bool whichKing) const {
-    return std::ranges::any_of(tempMoves, [&](const Move& move) {
-        return move.getNextPosition() == kingPositions[whichKing];
-    });
-}
-
-/// Implementacja givesCheck
-bool Board::givesCheck(const std::pmr::vector<Move> &tempMoves) const {
-    return std::ranges::any_of(tempMoves, [&](const Move& move) {
-        return move.getNextPosition() == kingPositions[!whitesTurn];
-    });
-}
 
 /// Implementacja getFullMove
 std::optional<Move> Board::getFullMove(const Move &shallowMove) {
@@ -317,13 +286,6 @@ bool Board::canCastleLong(const bool forColor) const {
     if (board[row][1] != nullptr || board[row][2] != nullptr || board[row][3] != nullptr) return false;
     if (inCheck()) return false;
     return true;
-}
-
-/// Implementacja isTileAttacked
-bool Board::isTileAttacked(std::pmr::vector<Move> & moves, const std::pair<int8, int8> &position) {
-    return std::ranges::any_of(moves, [&](const Move& move) {
-        return move.getNextPosition() == position;
-    });
 }
 
 /// Implementacja metody getEnPassant

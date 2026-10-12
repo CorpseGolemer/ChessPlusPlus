@@ -19,7 +19,7 @@ class GameManager {
     // ===== POLA KLASY =====
 
     /// Wybrane pole szachownicy
-    std::pair<int, int> selectedTile = {-1,-1};
+    std::optional<std::pair<int, int>> selectedTile = std::nullopt;
     /// Czy dane pole jest podświetlone
     std::vector<std::pair<int, int>> highlightedTiles{};
     /// Ostatni ruch
@@ -76,7 +76,7 @@ public:
     // ===== GETTERY =====
 
     /// Metoda zwracająca obecnie wybrane pole
-    [[nodiscard]] const std::pair<int, int> &getSelectedTile() const;
+    [[nodiscard]] const std::pair<int, int> getSelectedTile() const;
     /// Metoda zwraca array podświetlonych pól
     [[nodiscard]] const std::vector<std::pair<int, int>> & getHighlightedTiles() const;
     /// Metoda sprawdza, czy obecnie wybrano jakieś pole
@@ -88,7 +88,7 @@ public:
     /// Zwraca UIState
     GameState getState() const;
     /// Zwraca pole promocyjne
-    int getPromotionFile() const;// -1, jeśli nie ma
+    std::optional<std::pair<uint8_t, uint8_t>> getPromotionFile() const;// -1, jeśli nie ma
     /// Zwraca ostatni ruch
     std::optional<Move> getLastMove() const;
     /// Zwraca, którym kolorem gramy

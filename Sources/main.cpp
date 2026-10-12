@@ -3,8 +3,8 @@
 #include "../Headers/App.h"
 #include "../Headers/Game/Zobrist.h"
 
-constexpr std::string projectName = "ChessPlusPlus";
-constexpr std::string version = "0.1";
+constexpr std::string_view projectName = "ChessPlusPlus";
+constexpr std::string_view version = "0.1";
 
 int main() {
     Zobrist::init();

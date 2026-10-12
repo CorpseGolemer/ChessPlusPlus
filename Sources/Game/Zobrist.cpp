@@ -7,7 +7,7 @@ std::array<u64, 16> Zobrist::castlingRights;
 
 void Zobrist::init() {
     // I'm blue (If I was green I would DIE)
-    SplitMix64 generator(0xDABADEEDABADABEBLU);
+    SplitMix64 generator(0xDABADEEDABADABEBULL);
 
     // Generowanie dla figur
     for (int i = 0; i < 12; i++) {

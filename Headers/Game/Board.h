@@ -56,12 +56,6 @@ private:
     void findAllMoves();
     /// Metoda zwraca tylko ruchy POWIERZCHOWNE dla WYBRANEGO koloru (bez sprawdzania, szacha itp.)
     [[nodiscard]] std::pmr::vector<Move> findShallowMoves() const;
-    /// Metoda zwraca wszystkie ruchy powierzchowne
-    void findAllShallowMoves(std::pmr::vector<Move> & thisMoves, std::pmr::vector<Move> & opponentMoves) const;
-    /// Metoda zwraca informację czy obecna figura jest przypięta
-    bool wouldExposeKing(const std::pmr::vector<Move> & tempMoves, bool whichKing) const;
-    /// Metoda zwraca informację czy po ruchu nastąpi szach
-    bool givesCheck(const std::pmr::vector<Move> & tempMoves) const;
     /// Metoda oddaje pełny ruch z allMoves na podstawie podanego niepełnego (same pozycje)
     std::optional<Move> getFullMove(const Move & shallowMove);
     /// Pomocnicza metoda, która zajmuje się ruchami pionów (oczyszcza trochę applyMove)
@@ -88,8 +82,6 @@ public:
     bool canCastleShort(bool forColor) const;
     /// Zwraca czy można wykonać długą roszadę
     bool canCastleLong(bool forColor) const;
-    /// Zwraca czy dane pole jest atakowane
-    static bool isTileAttacked(std::pmr::vector<Move> & moves, const std::pair<int8, int8> & position) ;
 
     // ===== GETTERY I SETTERY =====
 

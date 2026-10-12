@@ -1,6 +1,5 @@
 #include "../../Headers/Game/Game.h"
-#include <algorithm>
-#include <assert.h>
+#include <cassert>
 
 Game::Game() {
     board.generateMoves();
@@ -60,7 +59,9 @@ void Game::makeMove(const Move &move) {
                 if (board.isWhitesTurn()) endReason = EndReason::Mate_Black;
                 else endReason = EndReason::Mate_White;
             }
-            endReason = EndReason::Stalemate;
+            else {
+                endReason = EndReason::Stalemate;
+            }
         }
         // Szukaj innych remisów
         postMoveUpdate();
