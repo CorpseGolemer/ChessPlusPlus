@@ -1,0 +1,13 @@
+# IDE & Editor files
+.idea/
+.vscode/
+
+# Build directories
+cmake-build-debug/
+cmake-build-release/
+build/
+bin/
+
+# System files
+.DS_Store
+Thumbs.db
