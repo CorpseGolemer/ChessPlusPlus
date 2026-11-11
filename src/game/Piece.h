@@ -24,33 +24,42 @@ namespace piece {
     constexpr u8 TypeMask = 0b0000'0111;
     constexpr u8 ColorMask = 0b0000'1000;
 
-    /// \brief Returns index of piece with given parameters
+    static_assert(static_cast<u8>(Color::Black) == ColorMask, "Color::Black value MUST match piece::ColorMask!");
+    static_assert(static_cast<u8>(PieceType::King) < TypeMask, "PieceType::King value MUST be less than piece::TypeMask!");
+
+    /// \brief Returns value of piece with given parameters
     [[nodiscard]] constexpr Piece create(const PieceType type, const Color color) noexcept {
         assert(type <= PieceType::King && "Attempted creating piece with invalid PieceType!");
         assert((color == Color::White || color == Color::Black) && "Attempted creating piece with invalid Color!");
         return static_cast<u8>(type) | static_cast<u8>(color);
     }
 
-    [[nodiscard]] constexpr PieceType getType(const Piece piece) noexcept {
-        const u8 type = piece & TypeMask;
+    [[nodiscard]] constexpr bool isEmpty(const Piece pc) noexcept {
+        return (pc & TypeMask) == static_cast<u8>(PieceType::None);
+    }
+
+    [[nodiscard]] constexpr PieceType getType(const Piece pc) noexcept {
+        const u8 type = pc & TypeMask;
         assert(type <= static_cast<u8>(PieceType::King) && "Piece corrupted! Invalid PieceType!");
         return static_cast<PieceType>(type);
-    } 
-
-    [[nodiscard]] constexpr bool isEmpty(const Piece piece) noexcept {
-        return (piece & TypeMask) == static_cast<u8>(PieceType::None);
     }
 
-    /// \brief Checks if given piece color matches the wanted
-    /// \param piece piece to check the color
+    /// \warning Debug: assert. Release: undefined result for an empty square
+    [[nodiscard]] constexpr Color getColor(const Piece pc) noexcept {
+        assert(!isEmpty(pc) && "Empty square has no color!");
+        return static_cast<Color>(pc & ColorMask);
+    }
+
+    /// \brief Checks if given piece color matches the other
+    /// \param pc piece to check the color
     /// \param color this color is compared with piece’s color
-    [[nodiscard]] constexpr bool isSameColor(const Piece piece, const Color color) noexcept {
-        return !isEmpty(piece) && (piece & ColorMask) == static_cast<u8>(color);
+    [[nodiscard]] constexpr bool isAlly(const Piece pc, const Color color) noexcept {
+        return !isEmpty(pc) && (pc & ColorMask) == static_cast<u8>(color);
     }
 
-    /// \brief Checks if two given pieces match by color
-    [[nodiscard]] constexpr bool isSameColor(const Piece piece1, const Piece piece2) noexcept{
-        return !isEmpty(piece1) && !isEmpty(piece2) && (piece1 & ColorMask) == (piece2 & ColorMask);
+    /// \brief Checks if given piece color does not match the other
+    [[nodiscard]] constexpr bool isEnemy(const Piece pc, const Color color) noexcept{
+        return !isEmpty(pc) && (pc & ColorMask) != static_cast<u8>(color);
     }
 
     /// \brief Returns opposite color for a given color
@@ -58,7 +67,7 @@ namespace piece {
         return static_cast<Color>(static_cast<u8>(color) ^ ColorMask);
     }
 
-    constexpr Piece fromChar(const char chr) noexcept {
+    [[nodiscard]] constexpr Piece fromChar(const char chr) noexcept {
         switch (chr) {
             case 'p': return create(PieceType::Pawn, Color::Black);
             case 'P': return create(PieceType::Pawn, Color::White);
