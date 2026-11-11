@@ -63,14 +63,13 @@ namespace castling {
         return (base & (... | rights)) != CastlingRights::None;
     }
 
-    constexpr std::optional<CastlingRights> fromChar(const char chr) noexcept {
+    [[nodiscard]] constexpr CastlingRights fromChar(const char chr) noexcept {
         switch (chr) {
-            case '-': return CastlingRights::None;
             case 'K': return CastlingRights::WhiteKing;
             case 'Q': return CastlingRights::WhiteQueen;
             case 'k': return CastlingRights::BlackKing;
             case 'q': return CastlingRights::BlackQueen;
-            default: return std::nullopt;
+            default: return CastlingRights::None;
         }
     }
 }
