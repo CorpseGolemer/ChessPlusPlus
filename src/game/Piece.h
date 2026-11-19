@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../utils/Types.h"
+#include <cassert>
 
 /// \brief Holds piece types
 enum class PieceType : u8 {
