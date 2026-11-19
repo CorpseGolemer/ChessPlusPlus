@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Types.h"
+#include <cassert>
+#include <array>
 
 namespace board_config {
     constexpr u8 SquareCount = 64;
