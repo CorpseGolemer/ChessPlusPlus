@@ -1,8 +1,6 @@
 #pragma once
 
 #include <concepts>
-#include <optional>
-
 #include "../utils/Types.h"
 
 enum class CastlingRights : u8 {
