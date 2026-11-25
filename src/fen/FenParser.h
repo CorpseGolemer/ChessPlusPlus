@@ -8,8 +8,10 @@
 #include "../utils/BoardConfig.h"
 
 namespace fen {
-    constexpr std::size_t SegmentCount = 6;
-    constexpr std::size_t MinimalSegmentCount = 4;
+    inline constexpr std::size_t SegmentCount = 6;
+    inline constexpr std::size_t MinimalSegmentCount = 4;
+
+    inline constexpr std::string_view StartingPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     struct Segments {
         std::array<std::string_view, SegmentCount> fields{};
