@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../utils/Types.h"
+#include "utils/Types.h"
 #include <cassert>
 
 /// \brief Holds piece types
@@ -24,6 +24,7 @@ enum class Color : u8 {
 namespace piece {
     constexpr u8 TypeMask = 0b0000'0111;
     constexpr u8 ColorMask = 0b0000'1000;
+    constexpr Piece NoPiece = 0b0000'0000;
 
     static_assert(static_cast<u8>(Color::Black) == ColorMask, "Color::Black value MUST match piece::ColorMask!");
     static_assert(static_cast<u8>(PieceType::King) < TypeMask, "PieceType::King value MUST be less than piece::TypeMask!");
@@ -83,6 +84,25 @@ namespace piece {
             case 'k': return create(PieceType::King, Color::Black);
             case 'K': return create(PieceType::King, Color::White);
             default: return static_cast<Piece>(PieceType::None);
+        }
+    }
+
+    [[nodiscard]] constexpr char toChar(const Piece pc) noexcept {
+        switch (pc) {
+            case NoPiece: return ' ';
+            case create(PieceType::Pawn, Color::Black): return 'p';
+            case create(PieceType::Pawn, Color::White): return 'P';
+            case create(PieceType::Knight, Color::Black): return 'n';
+            case create(PieceType::Knight, Color::White): return 'N';
+            case create(PieceType::Bishop, Color::Black): return 'b';
+            case create(PieceType::Bishop, Color::White): return 'B';
+            case create(PieceType::Rook, Color::Black): return 'r';
+            case create(PieceType::Rook, Color::White): return 'R';
+            case create(PieceType::Queen, Color::Black): return 'q';
+            case create(PieceType::Queen, Color::White): return 'Q';
+            case create(PieceType::King, Color::Black): return 'k';
+            case create(PieceType::King, Color::White): return 'K';
+            default: return 'u';
         }
     }
 }
