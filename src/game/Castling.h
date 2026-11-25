@@ -70,4 +70,15 @@ namespace castling {
             default: return CastlingRights::None;
         }
     }
+
+    [[nodiscard]] constexpr char toChar(const CastlingRights right) noexcept {
+        switch (right) {
+            case CastlingRights::None: return '-';
+            case CastlingRights::WhiteKing: return 'K';
+            case CastlingRights::WhiteQueen: return 'Q';
+            case CastlingRights::BlackKing: return 'k';
+            case CastlingRights::BlackQueen: return 'q';
+            default: return 'u';
+        }
+    }
 }
