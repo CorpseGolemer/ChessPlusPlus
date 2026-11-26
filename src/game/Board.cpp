@@ -1,30 +1,31 @@
 #include "Board.h"
 
-bool Board::loadFromFen(const fen::Segments &segments) {
-    BoardGrid grid{};
-    auto sideToMove = Color::White;
-    auto rights = CastlingRights::None;
-    u8 enPassantTarget = board_config::NoSquare;
+std::expected<void, fen::FenError> Board::loadFromFen(const fen::Segments &segments) {
+    const auto grid = fen::parsePosition(segments.placement());
+    if (!grid) return std::unexpected(grid.error());
 
-    if (!fen::parsePosition(segments.placement(), grid) ||
-        !fen::parseSideToMove(segments.sideToMove(), sideToMove) ||
-        !fen::parseCastlingRights(segments.castlingRights(), rights) ||
-        !fen::parseEnPassant(segments.enPassant(), enPassantTarget)) {
-        return false;
-    }
+    const auto side = fen::parseSideToMove(segments.sideToMove());
+    if (!side) return std::unexpected(side.error());
+
+    const auto rights = fen::parseCastlingRights(segments.castlingRights());
+    if (!rights) return std::unexpected(rights.error());
+
+    const auto enPassant = fen::parseEnPassant(segments.enPassant());
+    if (!enPassant) return std::unexpected(enPassant.error());
 
     // TODO: Validation if given position is legal
 
-    this->board = grid;
-    this->sideToMove = sideToMove;
-    this->castlingRights = rights;
-    this->enPassantTarget = enPassantTarget;
-    return true;
+    this->board = *grid;
+    this->sideToMove = *side;
+    this->castlingRights = *rights;
+    this->enPassantTarget = *enPassant;
+    return {};
 }
 
-bool Board::loadFromFen(const std::string_view fenString) {
-    fen::Segments segments;
-    return fen::parseSegments(fenString, segments) && loadFromFen(segments);
+std::expected<void, fen::FenError> Board::loadFromFen(const std::string_view fenString) {
+    return fen::parseSegments(fenString).and_then([this](const fen::Segments &seg) noexcept {
+        return this->loadFromFen(seg);
+    });
 }
 
 std::string Board::toString() const {

@@ -16,7 +16,6 @@ add_library(ChessCore STATIC
 
         # FEN
         src/fen/FenParser.h
-        src/fen/FenParser.cpp
 
         # UTILS
         src/utils/BoardConfig.h

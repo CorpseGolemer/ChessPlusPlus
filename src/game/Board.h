@@ -24,11 +24,11 @@ public:
 
     /// \brief Function that sets position on board from fen position
     /// \param segments FEN position divided into segments without whitespaces
-    [[nodiscard]] bool loadFromFen(const fen::Segments& segments);
+    [[nodiscard]] std::expected<void, fen::FenError> loadFromFen(const fen::Segments& segments);
 
     /// \brief Function that sets position on board from fen position
     /// \param fenString Full chess position in FEN notation
-    [[nodiscard]] bool loadFromFen(std::string_view fenString);
+    [[nodiscard]] std::expected<void, fen::FenError> loadFromFen(std::string_view fenString);
 
     [[nodiscard]] constexpr Piece pieceAt(const u8 square) const noexcept {
         return board[square];
